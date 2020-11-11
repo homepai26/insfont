@@ -12,9 +12,11 @@ usuages() {
     cat <<EOF
 A script to install fonts from same directory.
 
-
+To install to bin, run "sudo install -m 777 ./insfont.sh /bin/insfont"
 
 	-d | --directory : install fonts from another directory.
+	-h | --help	 : print usuages.
+
 EOF
 }
 
