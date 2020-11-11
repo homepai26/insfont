@@ -12,6 +12,8 @@ usuages() {
     cat <<EOF
 A script to install fonts from same directory.
 
+
+
 	-d | --directory : install fonts from another directory.
 EOF
 }
@@ -49,10 +51,10 @@ $(find *.ttf *.otf 2> /dev/null)
 EOF
 
 if [ $UID = 0 ]; then
-    for i in $(find *.ttf &> /dev/null); do
+    for i in $(find *.ttf 2> /dev/null); do
 	mv $i $FONTDIR/TTF
     done
-    for i in $(find *.otf &> /dev/null); do
+    for i in $(find *.otf 2> /dev/null); do
 	mv $i $FONTDIR/OTF
     done
 else
