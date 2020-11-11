@@ -8,6 +8,29 @@ errexit() {
     exit
 }
 
+usuages() {
+    cat <<EOF
+A script to install fonts from same directory.
+
+	-d | --directory : install fonts from another directory.
+EOF
+}
+
+if [ $1 ]; then
+    while true; do
+	case $1 in
+	    -d|--directory)
+		cd $2
+		break
+		;;
+	    -h|--help|--usuage)
+		usuages
+	   	exit
+		;;
+	esac
+    done
+fi
+
 if [ $UID = 0 ]; then
     if [ ! -d $FONTDIR/TTF ]; then
 	mkdir $FONTDIR/TTF
@@ -16,7 +39,7 @@ if [ $UID = 0 ]; then
     fi
 else
     if [ ! -d $FONTDIR/TTF ]|| [ ! -d $FONTDIR/OTF ]; then
-	errexit "can't create directory."
+	errexit "can't create directory. or don't have directory. ($FONTDIR/TTF | $FONTDIR/OTF)"
     fi
 fi
 
