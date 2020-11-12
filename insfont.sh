@@ -2,7 +2,10 @@
 # make by homepai26 - pai
 
 FONTDIR=/usr/share/fonts
-upfontlist=off
+upfontlist="off"
+auto_update="off"               # default is off
+# if auto_update=on and don't have root permission
+# it will be update only
 
 errexit() {
     echo -e "$1" 1>&2
@@ -25,7 +28,9 @@ To install to bin, run "sudo install -m 777 ./insfont.sh /bin/insfont"
 	-d    | --directory  	      : install fonts from another directory.		
 	-h    |  --help	      	      : print usuages.
 	-u    | --update	      : update fonts list. (fc-cache -f -v)
-	EOF
+	      			      : if don't have root permission it will be
+				      : update list only.
+EOF
 }
 
 if [ $1 ]; then
@@ -69,9 +74,8 @@ fi
 
 cat <<EOF
 Fonts list :		
-$(find *.ttf *.otf 2> /dev/null)
-       	     
-       EOF
+$(find *.ttf *.otf 2> /dev/null)       	     
+EOF
 
 if [ $UID = 0 ]; then
     for i in $(find *.ttf 2> /dev/null); do
@@ -81,11 +85,17 @@ if [ $UID = 0 ]; then
 	mv $i $FONTDIR/OTF
     done
 else
-    if [ ! $upfontlist = on ]; then    
-	errexit "can't to install fonts to $FONTDIR. because don't have root permission." 
+    if [ $upfontlist != "on" ]; then
+	if [ $auto_update != "on" ]; then    
+	    errexit "can't to install fonts to $FONTDIR. because don't have root permission." 
+	else
+	    echo "update fonts list only."
+	fi
     fi
 fi
 
 if [ $upfontlist = on ]; then
     fc-cache -f -v
+elif [ $auto_update = on ]; then
+    fc-cache -f	-v
 fi
