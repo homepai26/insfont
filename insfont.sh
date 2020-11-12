@@ -22,10 +22,10 @@ EX:
 
 To install to bin, run "sudo install -m 777 ./insfont.sh /bin/insfont"
 
-	-d | --directory : install fonts from another directory.
-	-h | --help	 : print usuages.
-	-u | --update	 : update fonts list. (fc-cache -f -v)
-EOF
+	-d    | --directory  	      : install fonts from another directory.		
+	-h    |  --help	      	      : print usuages.
+	-u    | --update	      : update fonts list. (fc-cache -f -v)
+	EOF
 }
 
 if [ $1 ]; then
@@ -63,15 +63,15 @@ if [ $UID = 0 ]; then
     fi
 else
     if [ ! -d $FONTDIR/TTF ]|| [ ! -d $FONTDIR/OTF ]; then
-	    errexit "can't create directory. or don't have directory. ($FONTDIR/TTF | $FONTDIR/OTF)"
+	errexit "can't create directory. or don't have directory. ($FONTDIR/TTF | $FONTDIR/OTF)"
     fi
 fi
 
 cat <<EOF
-Fonts list : 
+Fonts list :		
 $(find *.ttf *.otf 2> /dev/null)
-
-EOF
+       	     
+       EOF
 
 if [ $UID = 0 ]; then
     for i in $(find *.ttf 2> /dev/null); do
@@ -82,7 +82,7 @@ if [ $UID = 0 ]; then
     done
 else
     if [ ! $upfontlist = on ]; then    
-    errexit "can't to install fonts to $FONTDIR. because don't have root permission." 
+	errexit "can't to install fonts to $FONTDIR. because don't have root permission." 
     fi
 fi
 
