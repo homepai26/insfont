@@ -63,7 +63,7 @@ if [ $UID = 0 ]; then
     fi
 else
     if [ ! -d $FONTDIR/TTF ]|| [ ! -d $FONTDIR/OTF ]; then
-	errexit "can't create directory. or don't have directory. ($FONTDIR/TTF | $FONTDIR/OTF)"
+	    errexit "can't create directory. or don't have directory. ($FONTDIR/TTF | $FONTDIR/OTF)"
     fi
 fi
 
@@ -81,7 +81,11 @@ if [ $UID = 0 ]; then
 	mv $i $FONTDIR/OTF
     done
 else
+    if [ ! $upfontlist = on ]; then    
     errexit "can't to install fonts to $FONTDIR. because don't have root permission." 
+    fi
 fi
 
-[ $upfontlist = on ]&& fc-cache -f -v
+if [ $upfontlist = on ]; then
+    fc-cache -f -v
+fi
