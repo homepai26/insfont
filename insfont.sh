@@ -11,8 +11,8 @@ errexit() {
 
 usuages() {
     cat <<EOF
-A script to install fonts from same directory.
-ex: 
+A script to install fonts from same directory or another directory.
+EX: 
 
     pai@supuraito ~/Downloads/CSChatThai $ pwd
     /home/pai/Downloads/CSChatThai
