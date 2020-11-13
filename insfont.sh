@@ -26,10 +26,11 @@ EX:
 To install to bin, run "sudo install -m 777 ./insfont.sh /bin/insfont"
 
 	-d    | --directory  	      : install fonts from another directory.		
-	-h    |  --help	      	      : print usuages.
+	-h    | --help	      	      : print usuages.
 	-u    | --update	      : update fonts list. (fc-cache -f -v)
 	      			      : if don't have root permission it will be
 				      : update list only.
+	-f    | --file		      : install font by target a file only one file.
 EOF
 }
 
@@ -48,6 +49,30 @@ if [ $1 ]; then
 		upfontlist=on
 		shift
 		;;	    
+	    -f|--file)
+		FILE=$2*
+		echo $FILE
+		if [ ! -d /tmp/insfont ]; then
+		    mkdir /tmp/insfont
+		else
+		    if [ ! -d /tmp/insfont ]; then
+			errexit "can't create /tmp/insfont "
+		    fi
+		fi
+
+		if [ ! $2 ]; then		   
+		    errexit "EX: $0 -f opensans.ttf"
+		fi
+		
+		
+		if [ -d /tmp/insfont ]; then
+		    cp $FILE /tmp/insfont  
+		fi
+
+		cd /tmp/insfont
+		shift 2
+		break
+		;;
 	    *)
 		if [ ! $1 ]; then
 		    break
