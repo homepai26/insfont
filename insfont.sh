@@ -1,126 +1,85 @@
 #!/bin/bash
-# make by homepai26 - pai
 
-FONTDIR=/usr/share/fonts
-upfontlist="off"
-auto_update="off"               # default is off
-# if auto_update=on and don't have root permission
-# it will be update only
+FONTSDIR="/usr/share/fonts"
+USER_LOCAL_FONTSDIR=~/.fonts
 
 errexit() {
-    echo -e "$1" 1>&2
+	echo -e "\033[0;31mError!\033[0m $1" 1>&2
     exit
+}
+
+target_font() {
+	if [ -f $1 ]; then FONTSLIST="$FONTSLIST $1"; fi
+}
+
+find_fonts() {
+	directory=$1
+	FONTSLIST="$FONTSLIST $(find $directory/*.ttf 2> /dev/null)"
+	FONTSLIST="$FONTSLIST $(find $directory/*.otf 2> /dev/null)"
 }
 
 usuages() {
     cat <<EOF
-A script to install fonts from same directory or another directory.
-EX: 
-
-    pai@supuraito ~/Downloads/CSChatThai $ pwd
-    /home/pai/Downloads/CSChatThai
-    pai@supuraito ~/Downloads/CSChatThai $ ls
-    CSChatThai.ttf	CSChatThaiUI.ttf  insfont.sh
-    pai@supuraito ~/Downloads/CSChatThai $ sudo ./insfont.sh -u
-
-To install to bin, run "sudo install -m 777 ./insfont.sh /bin/insfont"
-
-	-d    | --directory  	      : install fonts from another directory.		
-	-h    | --help	      	      : print usuages.
-	-u    | --update	      : update fonts list. (fc-cache -f -v)
-	      			      : if don't have root permission it will be
-				      : update list only.
-	-f    | --file		      : install font by target a file only one file.
+insfont is a script to install fonts from current directory, or target directory, or target files.
+ -d | --directory > Install fonts from THATS directory.		
+ -f | --file > Install fonts by target THATS files. 
+ -h | --help > Print usuages.
 EOF
 }
 
-if [ $1 ]; then
-    while true; do
-	case $1 in
-	    -d|--directory)
-		cd $2
-		shift 2
-		;;
-	    -h|--help|--usuage)
-		usuages
-		exit
-		;;
-	    -u|--update)
-		upfontlist=on
-		shift
-		;;	    
-	    -f|--file)
-		FILE=$2*
-		echo $FILE
-		if [ ! -d /tmp/insfont ]; then
-		    mkdir /tmp/insfont
-		else
-		    if [ ! -d /tmp/insfont ]; then
-			errexit "can't create /tmp/insfont "
-		    fi
-		fi
+while true
+	do
+		case $1
+			in
+				-h|--help)
+				usuages
+				break
+				;;
 
-		if [ ! $2 ]; then		   
-		    errexit "EX: $0 -f opensans.ttf"
-		fi
-		
-		
-		if [ -d /tmp/insfont ]; then
-		    cp $FILE /tmp/insfont  
-		fi
+				-f|--file)
+				if [ $2 ]
+					then 
+						target_font $2
+						shift 2
+					fi
+				;;
 
-		cd /tmp/insfont
-		shift 2
-		break
-		;;
-	    *)
-		if [ ! $1 ]; then
-		    break
-		else
-		    usuages
-		    exit
-		fi
-		;;
-	esac
-    done
-fi
+				-d|--directory)
+				if [ $2 ]
+					then
+						find_fonts $2
+						shift 2
+					fi
+				;;
 
-if [ $UID = 0 ]; then
-    if [ ! -d $FONTDIR/TTF ]; then
-	mkdir $FONTDIR/TTF
-    elif [ ! -d $FONTDIR/OTF ]; then
-	mkdir $FONTDIR/OTF
-    fi
-else
-    if [ ! -d $FONTDIR/TTF ]|| [ ! -d $FONTDIR/OTF ]; then
-	errexit "can't create directory. or don't have directory. ($FONTDIR/TTF | $FONTDIR/OTF)"
-    fi
-fi
-
-cat <<EOF
-Fonts list :		
-$(find *.ttf *.otf 2> /dev/null)       	     
-EOF
-
-if [ $UID = 0 ]; then
-    for i in $(find *.ttf 2> /dev/null); do
-	mv $i $FONTDIR/TTF
-    done
-    for i in $(find *.otf 2> /dev/null); do
-	mv $i $FONTDIR/OTF
-    done
-else
-    if [ $upfontlist != "on" ]; then
-	if [ $auto_update != "on" ]; then    
-	    errexit "can't to install fonts to $FONTDIR. because don't have root permission." 
-	else
-	    echo "update fonts list only."
-	fi
-    fi
-fi
-
-if [ $upfontlist = on ]; then
-    fc-cache -f -v
-elif [ $auto_update = on ]; then
-    fc-cache -f	-v
-fi
+				*)
+				find_fonts $PWD
+				for i in $FONTSLIST
+					do
+						if [ $UID == 0 ]
+							then
+								install_folder=$FONTSDIR
+							else
+								install_folder=$USER_LOCAL_FONTSDIR
+						fi
+						echo Moving $i to $install_folder/insfonts.
+						if [ ! -d $install_folder/insfonts ]
+							then
+								echo "Not found $install_folder/insfonts, Making folder."
+								mkdir -p $install_folder/insfonts
+								if [ ! -d $install_folder/insfonts ]
+									then
+										errexit "Cannot new folder $install_folder/insfonts."										
+								fi
+						fi
+						mv $i $install_folder/insfonts
+					done
+				if [ ! $i ]
+					then usuages
+					break
+				fi 
+				echo "Running fc-cache..."
+				fc-cache -f -v > /dev/null
+				break
+		esac
+done
