@@ -1,7 +1,7 @@
 #!/bin/bash
 
 FONTSDIR="/usr/share/fonts"
-USER_LOCAL_FONTSDIR="~/.local/share/fonts"
+USER_LOCAL_FONTSDIR=~/.local/share/fonts
 
 errexit() {
     echo -e "\033[0;31mError!\033[0m $1" 1>&2
