@@ -9,7 +9,7 @@ errexit() {
 }
 
 target_font() {
-	if [ -f $1 ]; then FONTSLIST="$FONTSLIST $1"; fi
+    if [ -f $1 ]; then FONTSLIST="$FONTSLIST $1"; fi
 }
 
 find_fonts() {
@@ -20,10 +20,13 @@ find_fonts() {
 
 usuages() {
     cat <<EOF
-insfont is a script to install fonts from current directory, or target directory, or target files.
- -d | --directory > Install fonts from THATS directory.		
- -f | --file > Install fonts by target THATS files. 
- -h | --help > Print usuages.
+insfont is a script to install fonts from current directory, or target
+directory, or target file.
+
+Possible flags are:
+ -d, --directory dir          Install multiple fonts from THAT directory.
+ -f, --file *.[ttf,otf]       Install single font by target THAT file.
+ -h, --help                   Print usuages.
 EOF
 }
 
@@ -62,6 +65,7 @@ do
 		else
 		    install_folder=$USER_LOCAL_FONTSDIR
 		fi
+		
 		echo Moving $i to $install_folder/insfonts.
 		if [ ! -d $install_folder/insfonts ]
 		then
@@ -69,15 +73,19 @@ do
 		    mkdir -p $install_folder/insfonts
 		    if [ ! -d $install_folder/insfonts ]
 		    then
-			errexit "Cannot new folder $install_folder/insfonts."										
+			errexit "Cannot new folder $install_folder/insfonts."
 		    fi
 		fi
+		
 		mv $i $install_folder/insfonts
 	    done
+	    
 	    if [ ! $i ]
-	    then usuages
-		 break
-	    fi 
+	    then
+		usuages
+		break
+	    fi
+	    
 	    echo "Running fc-cache..."
 	    fc-cache -f -v > /dev/null
 	    break
