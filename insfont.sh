@@ -25,7 +25,7 @@ create_directory() {
     
     if [ ! -d $install_folder/insfonts ]
     then
-	errexit "Cannot new folder $install_folder/insfonts."
+	errexit "Can not create new folder at $install_folder/insfonts."
     fi
 }
 
@@ -46,7 +46,7 @@ do
     case $1
     in
 	-h|--help)
-	    usuages
+	    usages
 	    break
 	    ;;
 	
